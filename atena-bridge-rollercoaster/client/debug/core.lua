@@ -25,13 +25,13 @@ end
 -- restore at OUR boot (covers a bridge restart; runs once, not on atena-restart). Wait for both deps to be
 -- 'started' first (robust to load-order: the bridge may load before atena/rollercoaster are ready).
 CreateThread(function()
-    while GetResourceState('atena') ~= 'started' or GetResourceState('atena-std-rollercoaster') ~= 'started' do Wait(250) end
+    while GetResourceState('atena') ~= 'started' or GetResourceState('std-rollercoaster') ~= 'started' do Wait(250) end
     local st = exports.atena:uiRecall('coaster:dbg')
     if type(st) ~= 'table' then return end
     if type(st.flags) == 'table' then
         for k, v in pairs(st.flags) do if Dbg.on[k] ~= nil then Dbg.on[k] = v and true or false end end
-        if Dbg.on.sync then exports['atena-std-rollercoaster']:setDebug('sync', true) end
-        if Dbg.on.speedlog then TriggerServerEvent('atena-std-rollercoaster:debug:speedLog', true) end
+        if Dbg.on.sync then exports['std-rollercoaster']:setDebug('sync', true) end
+        if Dbg.on.speedlog then TriggerServerEvent('std-rollercoaster:debug:speedLog', true) end
     end
     for _, pid in ipairs(st.panels or {}) do Dbg.panelOn[pid] = true end
 end)

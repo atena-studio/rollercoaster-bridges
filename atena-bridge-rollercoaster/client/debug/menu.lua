@@ -38,10 +38,10 @@ end)
 local function seatCalib()
     local ped = PlayerPedId()
     local pc = GetEntityCoords(ped)
-    local n = exports['atena-std-rollercoaster']:carCount() or 0
+    local n = exports['std-rollercoaster']:carCount() or 0
     local best, bestD, bestI
     for i = 1, n do
-        local c = exports['atena-std-rollercoaster']:carEntity(i)
+        local c = exports['std-rollercoaster']:carEntity(i)
         if c ~= 0 and DoesEntityExist(c) then
             local d = #(pc - GetEntityCoords(c))
             if not bestD or d < bestD then bestD, best, bestI = d, c, i end
@@ -53,7 +53,7 @@ local function seatCalib()
     local loc = GetOffsetFromEntityGivenWorldCoords(best, pc.x, pc.y, pc.z)
     local row, side = (loc.y < 0.0) and 'front' or 'back', (loc.x < 0.0) and 'left' or 'right'
     Dbg.clog('seatcalib', ('car=%s(idx%d) %s-%s local=(%.3f,%.3f,%.3f) cart=(%.3f,%.3f,%.3f) H=%.2f => %s={x=%.3f, y=%.3f, height=0.85}')
-        :format(tostring(exports['atena-std-rollercoaster']:carModel(bestI) or '?'), bestI, row, side,
+        :format(tostring(exports['std-rollercoaster']:carModel(bestI) or '?'), bestI, row, side,
             loc.x, loc.y, loc.z, cp.x, cp.y, cp.z, chd, row, math.abs(loc.x), loc.y))
 end
 
@@ -81,12 +81,12 @@ AddEventHandler('atena:debug:action', function(panel, key)
     if key == '*' then
         local v = not on.seats
         on.seats, on.entry, on.nodes, on.operator = v, v, v, v
-        if on.sync ~= v then on.sync = v; exports['atena-std-rollercoaster']:setDebug('sync', v) end
-        if on.speedlog ~= v then on.speedlog = v; TriggerServerEvent('atena-std-rollercoaster:debug:speedLog', v) end
+        if on.sync ~= v then on.sync = v; exports['std-rollercoaster']:setDebug('sync', v) end
+        if on.speedlog ~= v then on.speedlog = v; TriggerServerEvent('std-rollercoaster:debug:speedLog', v) end
     elseif key == 'sync' then
-        on.sync = not on.sync; exports['atena-std-rollercoaster']:setDebug('sync', on.sync)
+        on.sync = not on.sync; exports['std-rollercoaster']:setDebug('sync', on.sync)
     elseif key == 'speedlog' then
-        on.speedlog = not on.speedlog; TriggerServerEvent('atena-std-rollercoaster:debug:speedLog', on.speedlog)
+        on.speedlog = not on.speedlog; TriggerServerEvent('std-rollercoaster:debug:speedLog', on.speedlog)
     elseif on[key] ~= nil then
         on[key] = not on[key]
     end
@@ -98,7 +98,7 @@ end)
 AddEventHandler('atena:debug:action', function(panel, key, value)
     if panel ~= 'coaster:seatcalib' then return end
     Dbg.calibCar = Dbg.calibCar or 1; Dbg.calibSic = Dbg.calibSic or 1
-    local R = exports['atena-std-rollercoaster']
+    local R = exports['std-rollercoaster']
     local function watchCart() exports.atena:toolCamWatch(R:carEntity(Dbg.calibCar) or 0) end  -- shared Tool cam → this cart
     local function preview() watchCart(); R:dbgSeatPreview(Dbg.calibCar, Dbg.calibSic) end       -- snap there → nudges visible
     if key == 'car' then                                            -- stepper sends -1 / +1

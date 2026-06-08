@@ -4,13 +4,13 @@
 -- fires rollercoaster's intents. INERT unless both resources are started.
 
 if GetResourceState('atena') ~= 'started'
-   or GetResourceState('atena-std-rollercoaster') ~= 'started' then return end
+   or GetResourceState('std-rollercoaster') ~= 'started' then return end
 
 local panelOpen = false
 
 -- ── panel lifecycle ─────────────────────────────────────────────────────────────────────────
 local function pushState()
-    local s = exports['atena-std-rollercoaster']:getPanelState()
+    local s = exports['std-rollercoaster']:getPanelState()
     if s then s.action = 'state'; SendNUIMessage(s) end
 end
 
@@ -19,7 +19,7 @@ local function openPanel()
     panelOpen = true
     SetNuiFocus(true, true)
     SendNUIMessage({ action = 'open' })
-    local tr = exports['atena-std-rollercoaster']:getTrackSchematic()
+    local tr = exports['std-rollercoaster']:getTrackSchematic()
     if tr then SendNUIMessage({ action = 'track', points = tr.points, station = tr.station }) end
     pushState()
     CreateThread(function()
@@ -36,22 +36,22 @@ end
 
 -- ── NUI callbacks -> rollercoaster intents (literal names; the bridge is anti-bias exempt) ───
 RegisterNUICallback('bars', function(data, cb)
-    TriggerServerEvent('atena-std-rollercoaster:op:bars', data and data.down and true or false, data and data.train); cb('ok')
+    TriggerServerEvent('std-rollercoaster:op:bars', data and data.down and true or false, data and data.train); cb('ok')
 end)
 RegisterNUICallback('dispatch', function(data, cb)
-    TriggerServerEvent('atena-std-rollercoaster:op:dispatch', data and data.train); cb('ok')
+    TriggerServerEvent('std-rollercoaster:op:dispatch', data and data.train); cb('ok')
 end)
 RegisterNUICallback('estop', function(data, cb)
-    TriggerServerEvent('atena-std-rollercoaster:op:estop', data and data.train); cb('ok')
+    TriggerServerEvent('std-rollercoaster:op:estop', data and data.train); cb('ok')
 end)
 RegisterNUICallback('setFleet', function(data, cb)
-    TriggerServerEvent('atena-std-rollercoaster:op:setFleet', (data and data.trains) or {}); cb('ok')
+    TriggerServerEvent('std-rollercoaster:op:setFleet', (data and data.trains) or {}); cb('ok')
 end)
 RegisterNUICallback('callOperator', function(_, cb)
-    TriggerServerEvent('atena-std-rollercoaster:op:callOperator'); cb('ok')
+    TriggerServerEvent('std-rollercoaster:op:callOperator'); cb('ok')
 end)
 RegisterNUICallback('dismissOperator', function(_, cb)
-    TriggerServerEvent('atena-std-rollercoaster:op:dismissOperator'); cb('ok')
+    TriggerServerEvent('std-rollercoaster:op:dismissOperator'); cb('ok')
 end)
 RegisterNUICallback('close', function(_, cb) closePanel(); cb('ok') end)
 
@@ -66,13 +66,13 @@ local REASONS = {
 }
 local function reasonText(r) return REASONS[r] or tostring(r) end
 
-RegisterNetEvent('atena-std-rollercoaster:op:denied', function(reason)
+RegisterNetEvent('std-rollercoaster:op:denied', function(reason)
     exports.atena:uiNotify({ title = 'Giostra', description = reasonText(reason), type = 'error' })
 end)
-RegisterNetEvent('atena-std-rollercoaster:op:fleetDenied', function(reason)
+RegisterNetEvent('std-rollercoaster:op:fleetDenied', function(reason)
     exports.atena:uiNotify({ title = 'Flotta', description = 'Negato: ' .. reasonText(reason), type = 'error' })
 end)
-RegisterNetEvent('atena-std-rollercoaster:op:fleetOk', function(trains, cars)
+RegisterNetEvent('std-rollercoaster:op:fleetOk', function(trains, cars)
     exports.atena:uiNotify({ title = 'Flotta',
         description = ('Applicato: %s treno/i, %s vagoni'):format(tostring(trains), tostring(cars)), type = 'success' })
 end)
@@ -82,7 +82,7 @@ end)
 CreateThread(function()
     local list
     for _ = 1, 20 do
-        list = exports['atena-std-rollercoaster']:getInteractables()
+        list = exports['std-rollercoaster']:getInteractables()
         if list then break end
         Wait(250)
     end

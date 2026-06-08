@@ -2,7 +2,7 @@
 -- GlobalState.coasterNeonMode and applies the texture swap locally; this file OWNS that state: default
 -- 'auto' at boot, and a privileged override (NUI button intent + console command), gated by atena's
 -- can(src,'debug'). 'auto' = day/night (client decides from the synced clock); 'on'/'off' force it.
-if GetResourceState('atena') ~= 'started' or GetResourceState('atena-std-rollercoaster') ~= 'started' then return end
+if GetResourceState('atena') ~= 'started' or GetResourceState('std-rollercoaster') ~= 'started' then return end
 
 local VALID = { auto = true, on = true, off = true }
 

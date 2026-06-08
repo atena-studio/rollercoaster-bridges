@@ -1,8 +1,8 @@
 -- atena-bridge-rollercoaster debug — CARDS: the live inspector cards (TRAIN/RIDER/AUDIO/FLAGS row builders +
--- the throttled push loop). Reads REAL exposed values (GlobalState + exports['atena-std-rollercoaster']) and the shared
+-- the throttled push loop). Reads REAL exposed values (GlobalState + exports['std-rollercoaster']) and the shared
 -- `Dbg` (open set + flags). The debug observes the actual gameplay, it never replicates it.
 -- ROBUST: no permanent top-guard bail (load race). The push loop already gates Dbg.atenaUp(); the row
--- builders read exports['atena-std-rollercoaster'] only while pushing an OPEN panel (deps up by then). atena-framework §6.
+-- builders read exports['std-rollercoaster'] only while pushing an OPEN panel (deps up by then). atena-framework §6.
 
 local gs = Dbg.gs
 local function arr(k, t) local a = gs(k); return type(a) == 'table' and a[t] or nil end
@@ -36,14 +36,14 @@ local function trainRows()
 end
 
 local function riderRows()
-    local lp = exports['atena-std-rollercoaster']:localProg() or -1
+    local lp = exports['std-rollercoaster']:localProg() or -1
     local sp = (gs('coasterProg') or {})[1] or -1
-    local att, n = exports['atena-std-rollercoaster']:attachedMap() or {}, 0
+    local att, n = exports['std-rollercoaster']:attachedMap() or {}, 0
     for _ in pairs(att) do n = n + 1 end
-    local lead = exports['atena-std-rollercoaster']:leadCartCoords()
+    local lead = exports['std-rollercoaster']:leadCartCoords()
     return {
-        { key = 'seat', value = exports['atena-std-rollercoaster']:mySeat() or '—', tone = 'accent' },
-        boolRow('riding', exports['atena-std-rollercoaster']:riding()), { key = 'attached', value = n },
+        { key = 'seat', value = exports['std-rollercoaster']:mySeat() or '—', tone = 'accent' },
+        boolRow('riding', exports['std-rollercoaster']:riding()), { key = 'attached', value = n },
         { key = 'localProg', value = ('%.1f'):format(lp) }, { key = 'serverProg', value = ('%.1f'):format(sp) },
         { key = 'drift', value = ('%.1f'):format(lp - sp), tone = (math.abs(lp - sp) > 2.0) and 'red' or 'dim' },
         { key = 'leadPos', value = lead and ('%.0f,%.0f,%.0f'):format(lead.x, lead.y, lead.z) or '—' },
@@ -52,12 +52,12 @@ end
 
 local hasSPT = (GetStreamPlayTime ~= nil)
 local function audioRows()
-    local nodes = exports['atena-std-rollercoaster']:trackNodes() or {}
+    local nodes = exports['std-rollercoaster']:trackNodes() or {}
     local nn = #nodes
     local prog = (gs('coasterProg') or {})[1] or 0.0
     local node = (nn > 0) and (((nn - math.floor(prog)) % nn) + 1) or 0
     return {
-        boolRow('riding', exports['atena-std-rollercoaster']:riding()), { key = 'phase', value = gs('coasterPhase') or '—', tone = 'accent' },
+        boolRow('riding', exports['std-rollercoaster']:riding()), { key = 'phase', value = gs('coasterPhase') or '—', tone = 'accent' },
         { key = 'streamMs', value = gs('coasterStreamMs') or '—' },
         { key = 'playTime', value = hasSPT and (GetStreamPlayTime() or -1) or 'n/a' },
         { key = 'node', value = node }, { key = 'z', value = ('%.2f'):format((nodes[node] or {}).z or 0.0) },
@@ -76,16 +76,16 @@ local function flagsRows()
     }
 end
 
--- SEAT CALIBRATION card — read the standalone's REAL seat data (exports['atena-std-rollercoaster']:dbgSeatGet) and
+-- SEAT CALIBRATION card — read the standalone's REAL seat data (exports['std-rollercoaster']:dbgSeatGet) and
 -- expose clickable action-rows (bool rows = buttons; click in arrange fires atena:debug:action → menu.lua
 -- nudges the real offset/heading via dbgSeatNudge / boards via dbgTestBoard). The standalone owns the data
 -- + behaviour; the bridge is the menu (headless doctrine).
 local function calibRows()
     local car = Dbg.calibCar or 1
     local sic = Dbg.calibSic or 1
-    local n = exports['atena-std-rollercoaster']:carCount() or 0
-    local g = exports['atena-std-rollercoaster']:dbgSeatGet(sic) or {}
-    local anchor = exports['atena-std-rollercoaster']:dbgGetAnchor()
+    local n = exports['std-rollercoaster']:carCount() or 0
+    local g = exports['std-rollercoaster']:dbgSeatGet(sic) or {}
+    local anchor = exports['std-rollercoaster']:dbgGetAnchor()
     -- free orbit cam = the SHARED Atena.Tool cam (watches the selected cart), not a bridge-local one.
     local cam = exports.atena:toolCamGet() or {}
     local rows = {

@@ -5,7 +5,7 @@
 -- are started — no hard `dependencies`, pure runtime detection.
 
 if GetResourceState('atena') ~= 'started'
-   or GetResourceState('atena-std-rollercoaster') ~= 'started' then return end
+   or GetResourceState('std-rollercoaster') ~= 'started' then return end
 
 -- NOTE: this closure runs in the BRIDGE's Lua state (FiveM keeps a function ref bound to its origin
 -- resource). atena's `Atena.*` globals are NOT visible here — we call atena's PUBLIC exports
@@ -15,7 +15,7 @@ if GetResourceState('atena') ~= 'started'
 -- rollercoaster's default policy is OPEN (everyone). Here atena's role system decides who may run
 -- privileged actions ('operator' | 'fleet' | 'debug') — DENY-BY-DEFAULT (no role => denied). The
 -- perm name is the bare action (matches the seeded roles); namespace per-resource later if needed.
-exports['atena-std-rollercoaster']:setAuthorizer(function(src, action)
+exports['std-rollercoaster']:setAuthorizer(function(src, action)
     return exports.atena:can(src, action)
 end)
 
@@ -23,7 +23,7 @@ end)
 -- Route rollercoaster's inbound net validation through atena's centralized guard (arg cap +
 -- per-source rate-limit + schema + distance), so every bridged resource shares ONE policy and
 -- future global protections (e.g. throttling a flooder) apply everywhere at once.
-exports['atena-std-rollercoaster']:setGuard(function(opts, src, args)
+exports['std-rollercoaster']:setGuard(function(opts, src, args)
     return exports.atena:checkInbound(opts, src, args)
 end)
 
@@ -31,7 +31,7 @@ end)
 -- atena observes rollercoaster's PUBLIC events (rollercoaster:*) and applies its own logic
 -- (logging, economy, ...). rollercoaster keeps emitting them whether or not atena is present.
 -- Example — route a boarding into atena's logger (uncomment when wiring real behavior):
---   AddEventHandler('atena-std-rollercoaster:boarded', function(seat)
+--   AddEventHandler('std-rollercoaster:boarded', function(seat)
 --       TriggerEvent('atena:log', 'info', 'rollercoaster', ('player %s boarded seat %s'):format(source, seat))
 --   end)
 

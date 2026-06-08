@@ -4,7 +4,7 @@
 -- (engine-polled) + the continuous launch countdown. Pure renderer + forwarder (no gameplay decision).
 
 if GetResourceState('atena') ~= 'started'
-   or GetResourceState('atena-std-rollercoaster') ~= 'started' then return end
+   or GetResourceState('std-rollercoaster') ~= 'started' then return end
 
 local C  = CoasterUI or {}
 local A  = C.actions or {}
@@ -12,11 +12,11 @@ local ST = C.status or {}
 
 -- intent closures (literal exports; the standalone runs the real Ride logic)
 local INTENTS = {
-    board      = function(seat) exports['atena-std-rollercoaster']:board(seat) end,
-    toggleArms = function() exports['atena-std-rollercoaster']:toggleArms() end,
-    shiftLeft  = function() exports['atena-std-rollercoaster']:shiftLeft() end,
-    shiftRight = function() exports['atena-std-rollercoaster']:shiftRight() end,
-    exit       = function() exports['atena-std-rollercoaster']:exit() end,
+    board      = function(seat) exports['std-rollercoaster']:board(seat) end,
+    toggleArms = function() exports['std-rollercoaster']:toggleArms() end,
+    shiftLeft  = function() exports['std-rollercoaster']:shiftLeft() end,
+    shiftRight = function() exports['std-rollercoaster']:shiftRight() end,
+    exit       = function() exports['std-rollercoaster']:exit() end,
 }
 
 -- on-change senders (atena UI), one per slot
@@ -66,10 +66,10 @@ local function render(spec)
     end
 end
 
-AddEventHandler('atena-std-rollercoaster:prompt', function(spec) render(spec) end)
+AddEventHandler('std-rollercoaster:prompt', function(spec) render(spec) end)
 -- initial sync: direct call (rollercoaster is 'started' per the top guard, so the export is callable).
 -- nil → render('none'); the prompt event delivers the real state on the next change. No timing-guess.
-render(exports['atena-std-rollercoaster']:currentPrompt())
+render(exports['std-rollercoaster']:currentPrompt())
 
 -- ── per-frame: ONLY input + the continuous countdown (render is event-driven, above) ──────────
 local function pressed(ctrl) return IsControlJustPressed(0, ctrl) or IsDisabledControlJustPressed(0, ctrl) end

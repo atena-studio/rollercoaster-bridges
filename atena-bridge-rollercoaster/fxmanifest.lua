@@ -1,5 +1,5 @@
 -- atena-bridge-rollercoaster — the rollercoaster <-> atena integration (bridge doctrine, atena-framework §6).
--- A bridge resource is EXEMPT from the anti-bias rule: calling exports['atena-std-rollercoaster']:* / Atena.* is its
+-- A bridge resource is EXEMPT from the anti-bias rule: calling exports['std-rollercoaster']:* / Atena.* is its
 -- nature (the glue). Each file self-guards with GetResourceState(...) so this stays INERT unless both
 -- the standalone and atena are started. Lives under the fivem/[bridge]/ CONTAINER, versioned WITH the
 -- rollercoaster repo (the glue evolves with its standalone).

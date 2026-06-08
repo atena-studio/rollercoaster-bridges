@@ -1,7 +1,7 @@
 -- atena-bridge-rollercoaster debug — MARKERS: native 3D world markers (seats/entry/nodes/operator box) — the
 -- SPATIAL debug, not cards. Reads REAL exposed values (seatPositions/trackNodes/getInteractables) + the
 -- shared `Dbg.on` flags (flipped from the FLAGS card). opBox/C/constants are local (only this file uses them).
--- ROBUST: no permanent top-guard bail (load race). The draw loop only reads exports['atena-std-rollercoaster'] when a
+-- ROBUST: no permanent top-guard bail (load race). The draw loop only reads exports['std-rollercoaster'] when a
 -- Dbg.on flag is enabled (default OFF, set only after the deps-gated restore) → deps up by then. §6.
 
 local C = CoasterUI or {}
@@ -15,7 +15,7 @@ local function drawOverlays(pc)
         DrawMarker(1, opBox.x, opBox.y, opBox.z - 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, dia, dia, 1.6, 0, 220, 255, 150, false, false, 2, false, nil, nil, false)
     end
     if on.seats or on.entry then
-        for _, p in ipairs(exports['atena-std-rollercoaster']:seatPositions() or {}) do
+        for _, p in ipairs(exports['std-rollercoaster']:seatPositions() or {}) do
             if on.seats and p.world then
                 local w = vector3(p.world.x, p.world.y, p.world.z)
                 if #(pc - w) < MARK_DIST then
@@ -32,7 +32,7 @@ local function drawOverlays(pc)
         end
     end
     if on.nodes then
-        local nodes = exports['atena-std-rollercoaster']:trackNodes() or {}
+        local nodes = exports['std-rollercoaster']:trackNodes() or {}
         local n = #nodes
         for i = 1, n do
             local a = nodes[i]
@@ -52,7 +52,7 @@ end
 
 CreateThread(function()
     for _ = 1, 20 do                                  -- cache the operator box position
-        local list = exports['atena-std-rollercoaster']:getInteractables()
+        local list = exports['std-rollercoaster']:getInteractables()
         if list then
             for _, it in ipairs(list) do
                 if it.id == 'operatorBox' and it.coords then opBox = vector3(it.coords.x, it.coords.y, it.coords.z) end
