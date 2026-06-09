@@ -16,9 +16,9 @@ AddEventHandler('onResourceStart', function(res)
     if res == GetCurrentResourceName() then setMode('auto') end
 end)
 
--- NUI button intent (client/neon.lua → here). source is the actor; privileged → can('debug').
--- net-guard: exempt — privileged admin toggle, gated by exports.atena:can(src,'debug') + schema/range (VALID) below.
-RegisterNetEvent('atena-bridge-rollercoaster:neon:setMode', function(mode)
+-- NUI button intent (client/neon.lua → here). source is the actor; privileged → can('debug'),
+-- schema/range via VALID below. (the net-guard exempt marker must sit on the RegisterNetEvent line itself.)
+RegisterNetEvent('atena-bridge-rollercoaster:neon:setMode', function(mode)  -- net-guard: exempt: privileged admin toggle, gated by exports.atena:can(src,'debug') + VALID schema/range
     local src = source
     if type(mode) ~= 'string' or not VALID[mode] then return end          -- schema + range
     if exports.atena:can(src, 'debug') then setMode(mode) end             -- deny-by-default (staff only)
