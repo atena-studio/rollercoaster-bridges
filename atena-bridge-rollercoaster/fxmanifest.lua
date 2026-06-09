@@ -43,8 +43,9 @@ client_scripts {
 -- bridge resource can now carry its OWN ui_page (no more single-bridge one-ui_page limit).
 ui_page 'nui/index.html'
 
--- nui/ is the BUILT output of web/ (Vite + React + Tailwind — `npm run build` in web/). Hashed
--- asset names => recreate the dev container after a rebuild (txAdmin can't `refresh`).
+-- nui/ is the COMPILED output; the SOURCE lives in the PRIVATE std-rollercoaster/web/ (Vite+React+Tailwind).
+-- Build with `.\.claude\bin\build-nui.ps1 rollercoaster` (std/web -> bridge/nui). Hashed asset names =>
+-- recreate the dev container after a rebuild (txAdmin can't `refresh`).
 files {
     'nui/index.html',
     'nui/assets/**',
