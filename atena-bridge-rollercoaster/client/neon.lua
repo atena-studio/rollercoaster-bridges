@@ -45,8 +45,8 @@ end
 
 -- prefer the synced `time` resource (shared clock); fall back to the local game clock if it's absent.
 local function isNight()
-    if GetResourceState('time') == 'started' then
-        local ok, n = pcall(function() return exports.time:isNight() end)
+    if GetResourceState('std-time') == 'started' then
+        local ok, n = pcall(function() return exports['std-time']:isNight() end)
         if ok and n ~= nil then return n and true or false end
     end
     local h = GetClockHours(); return h >= 20 or h < 6   -- standalone fallback (night = 20:00–05:59)
