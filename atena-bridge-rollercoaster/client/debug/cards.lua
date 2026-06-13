@@ -154,6 +154,20 @@ CreateThread(function()
     end
 end)
 
+-- hover-PEEK (view-only): preview a DATA card's content WITHOUT opening it (no panelOn, no badge);
+-- the push loop above only renders panelOn cards, so peek renders directly and the two never collide.
+-- Only the data panels preview — flags (feature) / seatcalib (workbench) declare no peekWin.
+local PEEKABLE = { ['coaster:train'] = true, ['coaster:rider'] = true, ['coaster:audio'] = true }
+AddEventHandler('atena:debug:peek', function(win)
+    local def = PEEKABLE[win] and not Dbg.panelOn[win] and Dbg.atenaUp() and PANELS[win]
+    if not def then return end
+    local ok, rows = pcall(def.rows)
+    if ok then exports.atena:uiDebugPanel(win, { title = def.title, rows = rows }) end
+end)
+AddEventHandler('atena:debug:peekEnd', function(win)
+    if PEEKABLE[win] and not Dbg.panelOn[win] and Dbg.atenaUp() then exports.atena:uiDebugPanel(win, nil) end
+end)
+
 -- close any open cards if the bridge stops
 AddEventHandler('onResourceStop', function(res)
     if res == GetCurrentResourceName() and Dbg.atenaUp() then

@@ -8,11 +8,13 @@
 local closures = {}
 -- toggle/value: a panel entry is an on/off TOGGLE in the launcher (inline badge, like godmode) —
 -- value = whether its card is currently pushed. Plain actions omit them (simple pick).
-local function reg(id, label, icon, fn, toggle, value)
+-- peek = true → the entry hover-previews its card (peekWin = its own window id = fid). Only DATA
+-- panels set it; feature/workbench cards (flags/seatcalib) omit it. cards.lua serves the preview.
+local function reg(id, label, icon, fn, toggle, value, peek)
     local fid = 'coaster:' .. id
     closures[fid] = fn
     if GetResourceState('atena') == 'started' then
-        exports.atena:debugAdd({ id = fid, group = 'coaster', label = label, icon = icon, toggle = toggle, value = value })
+        exports.atena:debugAdd({ id = fid, group = 'coaster', label = label, icon = icon, toggle = toggle, value = value, peekWin = peek and fid or nil })
     end
 end
 AddEventHandler('atena:debug:invoke', function(id) local fn = closures[id]; if fn then fn() end end)
@@ -59,9 +61,9 @@ end
 
 local function registerAll()
     local on = Dbg.panelOn
-    reg('train', 'Treno (pannello)',  'train',    function() togglePanel('coaster:train') end, true, on['coaster:train'])
-    reg('rider', 'Rider (pannello)',  'user',     function() togglePanel('coaster:rider') end, true, on['coaster:rider'])
-    reg('audio', 'Audio (pannello)',  'volume',   function() togglePanel('coaster:audio') end, true, on['coaster:audio'])
+    reg('train', 'Treno (pannello)',  'train',    function() togglePanel('coaster:train') end, true, on['coaster:train'], true)
+    reg('rider', 'Rider (pannello)',  'user',     function() togglePanel('coaster:rider') end, true, on['coaster:rider'], true)
+    reg('audio', 'Audio (pannello)',  'volume',   function() togglePanel('coaster:audio') end, true, on['coaster:audio'], true)
     reg('flags', 'Flag (pannello)',   'flag',     function() togglePanel('coaster:flags') end, true, on['coaster:flags'])
     reg('seatcalib', 'Calibra posto (card)', 'wrench', function() Dbg.calibCar = Dbg.calibCar or 1; Dbg.calibSic = Dbg.calibSic or 1; togglePanel('coaster:seatcalib') end, true, on['coaster:seatcalib'])
     reg('calib', 'Calibra posto (log qui)', 'terminal', seatCalib)
