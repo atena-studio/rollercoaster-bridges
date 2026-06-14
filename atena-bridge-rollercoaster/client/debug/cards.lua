@@ -72,7 +72,8 @@ local function flagsRows()
     return {
         flag('seats', 'seats', on.seats), flag('entry', 'entry', on.entry), flag('nodes', 'nodes', on.nodes),
         flag('operator', 'operator', on.operator), flag('sync', 'sync log', on.sync), flag('speedlog', 'speed log', on.speedlog),
-        { key = '*', value = false, kind = 'bool', tone = 'accent' },   -- toggle-all
+        -- toggle-all: the switch reflects the REAL aggregate (on only when every flag is on), not a lie.
+        { key = '*', value = (on.seats and on.entry and on.nodes and on.operator and on.sync and on.speedlog) or false, kind = 'bool', tone = 'accent' },
     }
 end
 
